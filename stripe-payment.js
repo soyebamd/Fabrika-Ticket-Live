@@ -1,6 +1,6 @@
 let testMode = "on"; // "on" or "off"
-const publicKeyTest = "pk_test_02LVg7SP0rgbdV3wcR1XqkoK00SNxG9bJu";
-const publicKeyLive = "pk_live_DZ3iuEkfi0crkfodvUT9t1J500u58eDiQL";
+const publicKeyTest = "";
+const publicKeyLive = "";
 
 let stripe = testMode === "on" ? Stripe(publicKeyTest) : Stripe(publicKeyLive);
 
