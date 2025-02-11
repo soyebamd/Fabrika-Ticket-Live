@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentShowDay;
   let currentShowTime;
   let currentEventName;
-  let currentEventPrice;
+  let currentEventPrice = 0;
   let currentSeatSelected;
   let currentCelebration;
   let currentSeatPeople;
@@ -1256,6 +1256,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             total += data.price; // Add the table price when checked
 
+            console.log("total price " + currentEventPrice);
+
             console.log(currentDay + "current selected date");
 
             let showName;
@@ -1272,7 +1274,7 @@ document.addEventListener("DOMContentLoaded", function () {
               show_day: currentShowDay,
               table_id: table_id,
               table_number: data.table_number,
-              table_price: data.price,
+              table_price: Number(data.price),
               table_location: data.location,
               table_booking_date: bookingDate,
               show_start_at: showStartSpan.textContent,
@@ -1894,6 +1896,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     subscribeCheckbox = document.getElementById("subscribeCheckbox");
 
+    // get totals of all array data
+
+    reservationData.forEach((data) => {
+      currentEventPrice += Number(data.table_price);
+      console.log(currentEventPrice);
+    });
+
+    console.log(currentEventPrice + "Total price for tables");
+
     //cart_customerName;
 
     if (
@@ -2141,7 +2152,7 @@ document.addEventListener("DOMContentLoaded", function () {
       form.appendChild(selectedEventPrice);
 
       let selectedSeatSelected = document.createElement("p");
-      selectedSeatSelected.innerHTML = `<strong>Number of Seats:</strong> ${currentSeatSelected}`;
+      selectedSeatSelected.innerHTML = `<strong>Number of Seats:</strong> ${reservationData.length}`;
       form.appendChild(selectedSeatSelected);
 
       let specialSeatingMessage = document.createElement("p");
