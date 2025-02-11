@@ -1270,6 +1270,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             //### ADD DATA TO ARRAY
             reservationData.push({
+              show_table_id: data.id,
               show_name: showDisplayNameArray[showName],
               show_day: currentShowDay,
               table_id: table_id,
@@ -2033,6 +2034,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const ticketLayout = document.createElement("div");
         ticketLayout.classList.add("ticket-layout");
 
+        let tableNumber = document.createElement("p");
+        tableNumber.className = "d-none";
+        tableNumber.innerHTML = `<strong>Table Number:</strong> ${ticket.table_id}`;
+
+        let fabrikaShowID = document.createElement("p");
+        tableNumber.className = "d-none";
+        fabrikaShowID.innerHTML = `<strong>Table ID:</strong> ${ticket.show_table_id}`;
+
         let fabrikaShowName = document.createElement("p");
         fabrikaShowName.innerHTML = `<strong>Show Name:</strong> ${ticket.show_name}`;
 
@@ -2059,6 +2068,9 @@ document.addEventListener("DOMContentLoaded", function () {
           2
         )}`;
 
+        ticketLayout.appendChild(tableNumber);
+
+        ticketLayout.appendChild(fabrikaShowID);
         ticketLayout.appendChild(fabrikaShowName);
         ticketLayout.appendChild(currentOnlineBookingDate);
         ticketLayout.appendChild(selectedShowDate);
@@ -2151,17 +2163,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
       form.appendChild(selectedEventPrice);
 
+      // code this if couch it will show couch instad of seat.
+
       let selectedSeatSelected = document.createElement("p");
       selectedSeatSelected.innerHTML = `<strong>Number of Seats:</strong> ${reservationData.length}`;
       form.appendChild(selectedSeatSelected);
 
-      let specialSeatingMessage = document.createElement("p");
-      specialSeatingMessage.innerHTML = `<strong>Special Seating Message:</strong> ${getSpecialSeatMessage.value}`;
-      form.appendChild(specialSeatingMessage);
-
+      // adtive this when couch is activated.
       let selectedSeatPeople = document.createElement("p");
       selectedSeatPeople.innerHTML = `<strong>Number of People Attending:</strong> ${currentSeatPeople}`;
       form.appendChild(selectedSeatPeople);
+
+      let specialSeatingMessage = document.createElement("p");
+      specialSeatingMessage.innerHTML = `<strong>Special Seating Message:</strong> ${getSpecialSeatMessage.value}`;
+      form.appendChild(specialSeatingMessage);
 
       let selectedCelebration = document.createElement("p");
       selectedCelebration.innerHTML = `<strong>Are You Celebrating A Birthday:</strong> ${currentCelebration}`;
