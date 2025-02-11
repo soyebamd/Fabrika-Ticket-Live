@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fabrika Reservation Project</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css"
+    />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      body {
+        background: #000;
+        color: #fff;
+      }
+
+      #time-slot li {
+        list-style: none;
+        border: solid 2px;
+        margin: 10px;
+        padding: 3px 5px;
+      }
+
+      #time-slot li:hover {
+        background-color: #f0f0f0;
+        cursor: pointer;
+      }
+
+      .remove{
+            position: absolute;
+    right: 22px;
+    cursor:pointer;
+
+      }
+
+      .checkout-wrappper{  position: absolute;
+        right: -230px;
+        top: 0;
+            width: 230px;
+               transition: all 1s;
+            
+       
+
+      }
+
+      .pos-0{
+        right:0;
+      }
+
+      #checkout {
+      
+        padding: 15px;
+         background: #5f0202;
+           box-shadow: 0 0 2px #fff;
+
+        
+
+
+
+      }
+
+      .menu{
+        position: absolute;
+    left: -70px;
+  
+      }
+
+      .cart{
+        position:absolute ;  left: -45px;
+      }
+
+
+
+      .table {
+        width: 22px;
+        cursor: pointer;
+      }
+
+      .table:active {
+        width: 28px;
+      }
+
+      .table:hover {
+        filter: contrast(0) brightness(5) grayscale(100%);
+      }
+
+      #time-slot input {
+        display: none;
+      }
+
+      #time-slot input:checked + li {
+        background-color: #690202;
+        color: #fff;
+      }
+
+      #show li {
+        cursor: pointer;
+      }
+
+      #show li.active,
+      #show li:hover {
+        color: red;
+      }
+      #customer-information {
+        max-width: 500px;
+      }
+      #featured-image img {
+        width: 420px;
+        height: 420px;
+        object-fit: cover;
+      }
+
+      .card {
+        width: 100%;
+        min-height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 0;
+        padding: 0 4px;
+        line-height: 14px;
+
+      }
+
+
+      .card small:not(:last-child){
+        display:none;
+      }
+
+      /* .border-right {
+        border-right: 1px solid #ffffff45;
+      } */
+
+      .in-one-row {
+        display: flex; /* Keep the columns in a row */
+        flex-wrap: nowrap; /* Prevent wrapping */
+        /* overflow-x: auto; */
+      }
+
+      .in-one-row-scroll {
+        display: flex; /* Keep the columns in a row */
+        flex-wrap: nowrap; /* Prevent wrapping */
+        overflow-x: auto;
+        justify-content: start; /* Center the content horizontally */
+
+        padding-bottom: 50px;
+      }
+
+      .justify-start {
+        justify-content: start;
+      }
+      .stage {
+        background: #d9d9d9;
+        border-radius: 100%;
+        width: 200px;
+        color:#000;
+        height: 200px;
+        margin:10px;
+      }
+
+      #cart-count{font-size: 12px;
+    padding: 4px;
+    background: #cc8e1f;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    top: 0;
+    right: -14px;}
+
+      .table-reserve {
+        margin: 0 8px;
+        text-align: center;
+      }
+
+      /* Hide the default checkbox */
+      .form-check-input {
+        appearance: none;
+        width: 20px;
+        /*  box-shadow: 0px 0px 3px rgb(255, 255, 255);*/
+        height: 20px;
+        background-color: rgb(0, 0, 0);
+        border: solid 1px #ffffff70 !important;
+        border-radius: 0px;
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        border-radius: 4px !important;
+        margin: 2px;
+      }
+
+      /* Checkbox checked state */
+      .form-check-input:checked {
+        background-color: #cc8e1f; /* Neon green */
+        border-color: #cc8e1f;
+      }
+
+      .form-check-input:disabled[type=checkbox] {
+  
+    --bs-form-check-bg-image: none;
+        background: #e1e1e1;
+    opacity: 1;
+    color: #fff;
+}
+
+      .form-check-input:disabled[type=checkbox]:after {
+  content: "✕"; /* Unicode "x" symbol */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: #999;
+}
+
+
+      /* Add a checkmark using pseudo-element */
+      .form-check-input:checked::after {
+        content: "";
+        font-size: 14px;
+        color: black; /* Contrast with green */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      /* Hover effect */
+      .form-check-input:hover {
+        border-color: #cc8e1f; /* Glowing green border */
+        box-shadow: 0px 0px 2px #cc8e1f;
+      }
+      .special-table .table-reserve {
+        display: flex;
+        position: relative;
+  min-width: 70px;
+flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+      }
+
+     
+
+      .special-table {
+        gap: 30px;
+        display: flex;
+        justify-content: center;
+      }
+      .special-table .table-reserve .input-container {
+        position: absolute;
+  top: 55%;
+  left: -3px;
+  transform: rotate(-90deg) translateX(50%);
+        order: -1;
+      }
+      .special-table-reverse .table-reserve .input-container {
+        order: 2;
+      }
+
+
+
+      .special-table-right-side .table-reserve {
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  align-items: flex-start;
+      }
+
+     .special-table-right-side    .input-container {
+ 
+  left: auto!important;
+  right: -2px!important;
+}
+
+.special-table-bottom .table-reserve {
+ 
+  justify-content: center;
+  flex-direction: row;
+}
+.special-table-bottom .table-reserve
+.input-container{
+  transform: rotate(0) translate(0);
+  top: 25.5px;
+  left:0;
+}
+
+      .table-slot{
+        width: max-content;
+      }
+
+       .special-table.flex-wrap .table-reserve {
+            flex-wrap: wrap;
+   
+    justify-content: center;
+       }
+
+      .special-table.flex-wrap .table-reserve .input-container
+      { order:10; width:100%}
+
+
+      .ui-datepicker-inline{
+            display: block;
+    background: transparent;
+    border: 0!important;
+    color:#fff!important;
+      }
+
+      .ui-state-default {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+    border: 0;
+    background: #f6f6f6;
+    font-weight: normal;
+    color: #454545;
+    background-color: #cc8e1f;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ui-datepicker .ui-datepicker-header {
+    position: relative;
+    padding: .2em 0;
+    background: #cc8e1f;
+    border: solid 1px;
+}
+
+a.ui-state-default:hover {
+  background: #000 !important;
+  border: solid 2px #cc8e1f;
+}
+.booked .ui-state-default {
+  background-color: rgb(255, 208, 0);
+  color: #fff;
+}
+.highlighted-date .ui-state-default {
+  background-color: #cc8e1f;
+  color: #fff;
+}
+.highlighted-date .ui-state-active {
+  background-color: black;
+  border: solid 3px #cc8e1f;
+}
+
+.cart-notification{
+  font-size: 20px;;
+}
+
+
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover{
+      background: #ffffff !important;
+    color: #000 !important;
+    border: #cc8e1f 4px solid !important;
+    font-weight: bold !important;
+}
+
+.ticket-layout{
+    background: url(./assets/ticket.svg);
+    display: inline-block;
+    width: auto;
+    max-width:320px;
+   
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 33px;
+    height: 236px;
+    background-color: black;
+    background-position: center;
+        margin: 0 4px;
+    width: 100%;
+}
+
+.ticket-layout p{
+  padding:0;
+  margin:0;
+  color:#000;
+}
+
+    </style>
+  </head>
+  <body>
+
+       <form id="cart-form" action="" method="POST">
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-md-4">
+          <div id="featured-image"></div>
+        </div>
+        <!-- Left Column -->
+        <div class="col-md-4">
+          <div
+            class="d-flex justify-content-start flex-column align-items-center"
+          >
+            <h4 class="mb-2 text-left h5">All Shows</h4>
+            <div id="show" class="mb-4"></div>
+
+            <h4 class="h5">Select A Show Date:</h4>
+            <div id="datepicker-container"></div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-4" id="show-info">
+     
+            <h4 class="mb-2 h5">Show Details</h4>
+            <p>
+              <strong>Show Name:</strong>
+              <span id="show-name-span">Opus (Variety Show)</span>
+            </p>
+            <p><strong>Show Day:</strong> <span id="show-day-span"></span></p>
+            <p>
+              <strong>Show Start At:</strong> <span id="show-start-span"></span>
+            </p>
+            <p><strong>Show Date:</strong> <span id="show-date"></span></p>
+            <p><strong>Minimum Spend:</strong> <span id="min-spend"></span></p>
+            <p><strong>Show Hours:</strong> <span id="show-hours"></span></p>
+
+            <h4 class="mb-2 h5">Select Show time:</h4>
+            <div id="time-slot"></div>
+        
+        </div>
+      </div>
+    </div>
+
+    <!-- Seating Selection Section -->
+    <div class="container-fluid">
+      <div id="events">
+        <div class="text-center">
+          <h4 class="mt-5 mb-2 h5">Select Event:</h4>
+          <div class="mb-3">
+            <input
+              type="radio"
+              id="main_floor"
+              name="layout"
+              value="Main Floor"
+              class="location"
+            />
+            <label for="main_floor">Main Floor</label>
+            <input
+              type="radio"
+              id="mezzanine_floor"
+              name="layout"
+              value="Mezzanine Floor"
+              class="location"
+            />
+            <label for="mezzanine_floor">Mezzanine Floor</label>
+          </div>
+        </div>
+        <!-- Main Floor Layout -->
+
+        <div class="container-fluid" id="main-floor">
+          <div class="row in-one-row-scroll">
+            <div class="">
+              <!-- row AB, 100 - 109-->
+              <div class="d-flex flex-row-reverse gap-4 justify-content-start">
+                <!-- Row 
+                   group4_tables
+                   104-100 -->
+                <div
+                  class="flex-row-reverse in-one-row table-slot"
+                  id="row-104-100"
+                ></div>
+
+                <!-- 
+                  group2_tables
+                  Row 109-105 -->
+                <div
+                  class="flex-row-reverse border-right in-one-row table-slot"
+                  id="row-109-105"
+                ></div>
+
+                <!-- 
+                  group1_tables
+                  Row AB -->
+                <div
+                  class="flex-row-reverse border-right in-one-row table-slot"
+                  id="row-AB"
+                ></div>
+              </div>
+
+              <!-- row 110 - 119 -->
+              <div class="d-flex gap-4 my-4 flex-row-reverse justify-content-start">
+                <!-- Row 
+                   group6_tables
+                   110 - 115 -->
+                <div
+                  class="flex-row-reverse border-right in-one-row table-slot"
+                  id="row-110-115"
+                ></div>
+
+                <!-- 
+                  group7_tables
+                  Row 116 - 119 -->
+                <div
+                  class="flex-row-reverse border-right in-one-row table-slot"
+                  id="row-116-119"
+                ></div>
+              </div>
+
+              <!-- row 120 - 129 -->
+              <div class="d-flex gap-4 my-4 flex-row-reverse justify-content-start">
+                <!-- Row 
+                   group8_tables
+                   120 - 125 -->
+                <div
+                  class="flex-row-reverse border-right in-one-row table-slot"
+                  id="row-120-125"
+                ></div>
+
+                <!-- 
+                  group9_tables
+                  Row 126 - 129 -->
+                <div
+                  class="flex-row-reverse border-right in-one-row table-slot"
+                  id="row-126-129"
+                ></div>
+              </div>
+
+              <!-- row 130 - 133 -->
+              <div class="d-flex gap-4 my-4 flex-row-reverse justify-content-start">
+                <!-- Row 
+                   group8_tables
+                   130- 131 -->
+                <div
+                  class="flex-row-reverse border-right in-one-row table-slot"
+                  id="row-130-131"
+                ></div>
+                <!-- 
+                  group9_tables
+                  Row 132 - 133 -->
+                <div
+                  class="flex-row-reverse border-right in-one-row table-slot"
+                  id="row-132-133"
+                ></div>
+              </div>
+            </div>
+
+            <div class="col in-one-row justify-start" id="stage">
+              <!--row 504 - 506 -->
+
+              <div class="row">
+                <!-- mezzanine_group1_tables 305-315 -->
+                <div
+                  class="col justify-end flex-column table-slot special-table"
+                  id="row-504-506"
+                ></div>
+              </div>
+
+              <!--row 500 - 501 -->
+              <div class="row">
+                <!-- 500-501 -->
+                <div
+                  class="col justify-end flex-column table-slot special-table"
+                  id="row-500-501"
+                ></div>
+              </div>
+              <!--STAGE-->
+              <div class="row align-content-center">
+                <div
+                  class="stage d-flex justify-content-center align-items-center"
+                >
+                  <h3>STAGE</h3>
+                </div>
+              </div>
+              <!--END STAGE-->
+              <!--row 500 - 501 -->
+              <div class="row">
+                <!-- 500-501 -->
+                <div
+                  class="col flex-column-reverse flex-column table-slot special-table special-table-reverse special-table-right-side"
+                  id="row-502-503"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="d-flex gap-4 my-4">
+                <!-- Row 
+               group4_tables
+               200-204 -->
+                <div
+                  class="border-right in-one-row table-slot"
+                  id="row-200-204"
+                ></div>
+
+                <!-- Row 
+              group5_tables 
+              205-209 -->
+                <div
+                  class="border-right in-one-row table-slot"
+                  id="row-205-209"
+                ></div>
+              </div>
+
+              <!-- table 210- 212-->
+              <div class="d-flex gap-4 my-4">
+                <!-- Row 
+              group12_tables
+               200-204 -->
+                <div
+                  class="border-right in-one-row table-slot"
+                  id="row-210-212"
+                ></div>
+              </div>
+
+              <!-- table 220- 222-->
+              <div class="d-flex gap-4 my-4">
+                <!-- Row 
+              group12_tables
+               200-204 -->
+                <div
+                  class="border-right in-one-row table-slot"
+                  id="row-220-222"
+                ></div>
+              </div>
+
+              <!-- table 230-->
+              <div class="d-flex gap-4 my-4">
+                <!-- Row 
+              group12_tables
+               230 -->
+                <div
+                  class="border-right in-one-row table-slot"
+                  id="row-230"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Floor Layout -->
+
+        <div id="mezzanine-floor">
+          <!-- Mezzanine Floor Layout -->
+
+          <div class="container-fluid d-flex justify-content-center">
+            <div class="row in-one-row-scroll">
+              <div class="col text-center">
+                <div>
+                  <!-- row 601-603 and 316-317 -->
+                  <div class="d-flex">
+                    <!-- Row 601-603 -->
+                    <div class="border-right table-slot" id="row-601-603"></div>
+
+                    <!-- Row 316-317 -->
+                    <div class="border-right table-slot special-table flex-column" id="row-315-316"></div>
+                  </div>
+                </div>
+              
+              
+              </div>
+
+                <div class="col">
+
+   <div>
+                  <!-- row 601-603 and 316-317 -->
+
+                  <div class="d-flex">
+                 
+                   
+                    <div class="table-slot d-flex gap-4 my-4 flex-row-reverse " id="row-304-314"></div>
+</div>
+                   
+                 
+                </div>
+
+
+                <!-- col 2 for stage-->
+              
+ <div
+                class=" d-flex justify-content-center align-items-center"
+              >
+              <div class="stage d-flex justify-content-center align-items-center">
+                <h3>STAGE</h3></div>
+              </div>
+
+
+               <div>
+                  <!-- row 317-317 -->
+
+                  <div class="d-flex justify-content-center">
+                 
+                   
+                    <div class="table-slot d-flex gap-4 my-4 special-table flex-wrap  special-table-bottom" id="row-317"></div>
+</div>
+                   
+                 
+                </div>
+
+
+                </div>
+
+                <div class="col">
+
+
+
+
+
+                         <div class="col text-center">
+                <div>
+                  <!-- row 601-603 and 316-317 -->
+                  <div class="d-flex">
+                    <!-- Row 601-603 -->
+                    <div class="border-right table-slot d-flex flex-column flex-column-reverse" id="row-300-303"></div>
+
+                    <!-- Row 316-317 -->
+                    <div class="border-right table-slot d-flex flex-column flex-column-reverse" id="row-400-403"></div>
+                  </div>
+                </div>
+              
+              
+              </div>
+
+
+
+
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+
+      <!-- Customer Information Section -->
+      <div id="customer-information" class="mt-5">
+        <div class="special-requests mb-4">
+          <strong>Special Requests/Notes:</strong>
+          <p>
+            (All tickets must be purchased together to guarantee seating. Please
+            contact the venue if you need to increase your party size, or if you
+            are a large group of 15+)
+          </p>
+        </div>
+
+         <div class="form-group d-flex flex-start">
+
+                     <input type="text" id="specialSeating" class="input-style" name="specialSeating" placeholder="Message">
+                      
+                     </div>
+
+        <h2 class="mb-4">Are You Celebrating a Birthday:</h2>
+        <div class="birthday-selection mb-4">
+          <div class="form-group d-flex flex-start mb-2">
+            <input
+              class="form-check-input cbx hidden"
+              type="radio"
+              name="celebrating"
+              id="celebrating-yes"
+              value="Yes"
+            />
+            <label
+              class="form-check-label lbl mr-1"
+              for="celebrating-yes"
+            ></label>
+            <span>Yes</span>
+          </div>
+          <div class="form-group d-flex flex-start">
+            <input
+              class="form-check-input cbx hidden"
+              type="radio"
+              name="celebrating"
+              id="celebrating-no"
+              value="No"
+              checked
+            />
+            <label
+              class="form-check-label lbl mr-1"
+              for="celebrating-no"
+            ></label>
+            <span>No</span>
+          </div>
+        </div>
+
+        <h2 class="mb-4">Please complete for checkout.</h2>
+        <div class="customer-form">
+          <div class="mb-3">
+            <label for="cart_customerName">First Name</label>
+            <input
+              type="text"
+              id="cart_customerName"
+              class="form-control"
+              name="cart_customerName"
+              placeholder="First Name"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="cart_customerLastName">Last Name</label>
+            <input
+              type="text"
+              id="cart_customerLastName"
+              class="form-control"
+              name="cart_customerLastName"
+              placeholder="Last Name"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="cart_customerEmail">Email</label>
+            <input
+              type="email"
+              id="cart_customerEmail"
+              class="form-control"
+              name="cart_customerEmail"
+              placeholder="Email"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="cart_customerPhone">Phone Number</label>
+            <input
+              type="tel"
+              id="cart_customerPhone"
+              class="form-control"
+              name="cart_customerPhone"
+              placeholder="Phone Number"
+              required
+            />
+          </div>
+
+          <div class="form-check mb-3">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="subscribeCheckbox"
+              name="subscribeCheckbox"
+              checked
+            />
+            <label class="form-check-label" for="subscribeCheckbox"
+              >Subscribe to our newsletter</label
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            name="submit"
+            id="cart-button"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkout-wrappper">
+      <div class="cart-notification d-flex justify-content-between">
+        <div class="menu" id="menu">  <i class="fa-solid fa-bars"></i> </div>
+      <div class="cart"> <i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span></div> 
+      </div>
+    <div id="checkout">
+
+  <div class="col">
+            <div id="showDetails" class="mb-3">
+                <div id="soldoutmessage"></div>
+              <!-- <div class="loading"></div> -->
+              <div id="reservation-info" class="d-none">
+
+               <!-- <div id="duble-show-container">
+
+               <h2 id="showSelect" class="text-white">Please select one show</h2>
+
+               <button id="special-show" value="boogie-brunch" class="btn changeShow">BOOGIE BRUNCH</button>
+               <button id="default-show" value="opus-saturday"  class="btn changeShow">Opus Saturday</button>
+
+
+
+
+               </div> -->
+
+               
+               
+              </div>
+            </div>
+          </div>
+
+    </div>
+
+    
+    </div>
+
+    <table id="result" border="1" class="d-none"></table>
+    <!-- Payment Form -->
+
+    </form>
+    <form
+      id="payment-form"
+      action=""
+      method="POST"
+      class="hidden"
+    ></form>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+
+    <script type="module" src="main.js"></script>
+ 
+
+          
+
+
+
+  </body>
+</html>
