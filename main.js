@@ -88,7 +88,13 @@ import {
   mezzanine_group1_tables,
 } from "./src/tableManagement.js";
 
+//dinner menu
+
+import { DinnerMenu } from "./src/DinnerMenu.js";
+
 document.addEventListener("DOMContentLoaded", function () {
+  // Fetch the dinner menu
+
   let currentShowName;
   let currentShowBeigningTime;
   let currentShowDay;
@@ -105,16 +111,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   console.log(validateMenuItems + "VALIDATE MENU FOR CHECKOUT");
 
-  let course_1 = 0;
-  let course_2 = 0;
-  let course_3 = 0;
-
-  let SelectedMenuCount = 0;
-
-  let course = [];
-  let courseIngredients = [];
-  let quantity = [];
-
   const VALID_COUPON_CODE = [
     "ELEVATEDBRUNCH",
     "ELEVATEDBORDELLO",
@@ -124,12 +120,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //### DINNER STUFF HERE
   //
-
-  let dinnerOptionsLogicCondition = false;
-
-  const dinnerPrice = 35;
-  const dinnerTax = 0.08; //8%
-  const gratuity = 0.2; // 20%
 
   let calculateDinnerPrice;
   let calculateDinnerTax;
@@ -480,6 +470,14 @@ document.addEventListener("DOMContentLoaded", function () {
       $("#datepicker").datepicker("setDate", firstAvailableDate);
       $("#datepicker").datepicker("option", "defaultDate", firstAvailableDate);
     }
+  }
+
+  function ResetTables() {
+    reservationData.length = 0;
+    checkout.innerHTML = "";
+    cartCount.textContent = 0;
+    customerInformation.style.display =
+      reservationData.length == 0 ? "none" : "block";
   }
 
   function insertNewShow(ID, dayIndexs) {
@@ -1211,12 +1209,18 @@ document.addEventListener("DOMContentLoaded", function () {
         //   );
         // }
 
-        if (
+        /* remove commnet when need to back multple reservation
+       
+       if (
           selectedCheckboxes[table_id] &&
           selectedCheckboxes[table_id].includes(i)
         ) {
           inputCheckbox.checked = true;
         }
+
+        */
+
+        ResetTables();
 
         inputCheckbox.setAttribute("name", "selected_table");
         inputCheckbox.setAttribute("class", "form-check-input");
@@ -1310,8 +1314,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 checkoutWrappper.classList.remove("pos-0");
 
               updateTableDisplay();
-              customerInformation.style.display =
-                removeBookingIndex == 0 ? "none" : "block";
             }
           }
 
@@ -1337,8 +1339,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Clear existing reservationData array
 
             // Clear existing content in the checkout element
-            reservationData.length = 0;
-            checkout.innerHTML = "";
+            ResetTables();
 
             // Clear reservationData before rebuilding
 
@@ -1348,7 +1349,6 @@ document.addEventListener("DOMContentLoaded", function () {
               reservationData.push(data);
 
               // Show/hide customer information
-              customerInformation.style.display = "block";
 
               // Create a new reservation item
               const reservationItem = document.createElement("div");
@@ -1367,7 +1367,22 @@ document.addEventListener("DOMContentLoaded", function () {
               cartCount.textContent = reservationData.length;
 
               console.log(reservationData.length + "REservaton data lentth");
+
+              // Update total number of selected people for Dinner
+              currentSelectedDinnerPeople = reservationData.length;
+
+              customerInformation.style.display =
+                reservationData.length == 0 ? "none" : "block";
+
+              dinnerMenu(currentDay);
+
               activeToggle(true);
+
+              // if (reservationData.length < 0) {
+              //   $("#menuContainer").hide();
+              // } else {
+              //   $("#menuContainer").show();
+              // }
 
               // Append the reservation item to the checkout element
               checkout.appendChild(reservationItem);
@@ -1470,6 +1485,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     });
+
+    //reset reservation data to default
+    reservationData.length = 0;
+    checkout.innerHTML = "";
   }
   //END
 
@@ -1581,6 +1600,10 @@ document.addEventListener("DOMContentLoaded", function () {
         //   console.log("Day name (e.g., 'Monday'):", dayName);
         currentDay = dayOfWeek;
 
+        selectedCalDate = selectedDate;
+
+        dinnerMenu(dayOfWeek);
+
         //### TRIGGER THE RESERVATION TABLES FUNCTION
 
         //displayShowName.indexOf(showDays);
@@ -1597,6 +1620,355 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     });
   });
+
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //✅
+  //### DINNER STUFF HERE
+  //
+
+  $("#menuContainer").hide();
+
+  let dinnerOptionsLogicCondition = false;
+
+  const dinnerPrice = 35;
+  const dinnerTax = 0.08; //8%
+  const gratuity = 0.2; // 20%
+
+  let todaySelectedDate = new Date();
+
+  console.log(todaySelectedDate + "Today date");
+
+  let SelectedMenuCount = 0;
+  let course_1 = 0;
+  let course_2 = 0;
+  let course_3 = 0;
+  let course = [];
+  let courseIngredients = [];
+  let quantity = [];
+  let selectedCalDate;
+
+  let currentSelectedDinnerPeople = 1;
+
+  const prixFixeDinnerMenuOption = document.querySelector(
+    "#prix-fixe-dinner-menu-option"
+  );
+
+  function calculateDinner(currentPeopleForDinner) {
+    console.log(currentPeopleForDinner);
+    calculateDinnerPrice = dinnerPrice * currentPeopleForDinner;
+    calculateDinnerTax = calculateDinnerPrice * dinnerTax;
+    calculateGratuity = calculateDinnerPrice * gratuity;
+
+    // Rounding the results to 2 decimal places
+    calculateDinnerPrice = calculateDinnerPrice.toFixed(2);
+    calculateDinnerTax = calculateDinnerTax.toFixed(2);
+    calculateGratuity = calculateGratuity.toFixed(2);
+
+    console.log(calculateDinnerPrice);
+    console.log(calculateDinnerTax);
+    console.log(calculateGratuity);
+
+    totalDinnerPrice = (
+      parseFloat(calculateDinnerPrice) +
+      parseFloat(calculateDinnerTax) +
+      parseFloat(calculateGratuity)
+    ).toFixed(2);
+    console.log("Total Dinner Price" + totalDinnerPrice);
+  }
+
+  // function dinnerMenu();
+  // dinner options menu logic
+  function dinnerOptionsLogic() {
+    // select option auto when change qty
+    const menuQuantity = document.querySelectorAll(".menu-quantity");
+
+    menuHeading = currentEventName + " Menu";
+
+    // const currentPeople = Number(this.value);
+    // const selectedPeople = Number(currentSeatSelected);
+
+    const ingredientsCheckbox = document.querySelectorAll(".ingredients-title");
+
+    menuQuantity.forEach((autoselect, index) => {
+      // console.log(currentSeatSelected + "Current Seat Selection");
+
+      autoselect.addEventListener("change", function () {
+        console.log("Current Seat Selected +" + currentSeatSelected);
+
+        //console.log(CourseName);
+
+        // DINNER OPTION MENU LOGIC
+
+        const CourseName = this.getAttribute("data-coursename");
+        if (CourseName == "first-course") {
+          SelectedMenuCount = 0;
+
+          menuQuantity.forEach((autoselect) => {
+            if (autoselect.getAttribute("data-coursename") === "first-course") {
+              SelectedMenuCount += parseInt(autoselect.value);
+            }
+          });
+
+          if (SelectedMenuCount > currentSelectedDinnerPeople) {
+            ingredientsCheckbox[index].checked = false;
+            this.value = 0;
+            course_1 = 0;
+
+            alert(
+              "Please choose the quantity of tickets bought for each course."
+            );
+          } else if (SelectedMenuCount < currentSelectedDinnerPeople) {
+            course_1 = 0;
+            ingredientsCheckbox[index].checked = true;
+          } else {
+            ingredientsCheckbox[index].checked = true;
+            course_1 = 1;
+          }
+
+          if (this.value == 0) {
+            ingredientsCheckbox[index].checked = false;
+          }
+        } else if (CourseName == "second-course") {
+          SelectedMenuCount = 0;
+
+          menuQuantity.forEach((autoselect) => {
+            if (
+              autoselect.getAttribute("data-coursename") === "second-course"
+            ) {
+              SelectedMenuCount += parseInt(autoselect.value);
+            }
+          });
+
+          if (SelectedMenuCount > currentSelectedDinnerPeople) {
+            ingredientsCheckbox[index].checked = false;
+            this.value = 0;
+            course_2 = 0;
+            alert(
+              "Please choose the quantity of tickets bought for each course."
+            );
+          } else if (SelectedMenuCount < currentSelectedDinnerPeople) {
+            course_2 = 0;
+            ingredientsCheckbox[index].checked = true;
+          } else {
+            ingredientsCheckbox[index].checked = true;
+            course_2 = 1;
+          }
+
+          if (this.value == 0) {
+            ingredientsCheckbox[index].checked = false;
+          }
+        } else if (CourseName == "third-course") {
+          SelectedMenuCount = 0;
+
+          menuQuantity.forEach((autoselect) => {
+            if (autoselect.getAttribute("data-coursename") === "third-course") {
+              SelectedMenuCount += parseInt(autoselect.value);
+            }
+          });
+
+          if (SelectedMenuCount > currentSelectedDinnerPeople) {
+            ingredientsCheckbox[index].checked = false;
+            this.value = 0;
+            course_3 = 0;
+
+            alert(
+              "Please choose the quantity of tickets bought for each course."
+            );
+          } else if (SelectedMenuCount < currentSelectedDinnerPeople) {
+            course_3 = 0;
+            ingredientsCheckbox[index].checked = true;
+          } else {
+            ingredientsCheckbox[index].checked = true;
+            course_3 = 1;
+          }
+
+          if (this.value == 0) {
+            ingredientsCheckbox[index].checked = false;
+          }
+        }
+        //END DINNER COURSE OPTIONS
+      });
+    });
+  }
+
+  // function create radio button
+  function createRadioButtons(name, options, containerId) {
+    // Create radio buttons for each option
+    options.forEach((option, index) => {
+      // Create main div container
+      const formGroup = document.createElement("div");
+      formGroup.className = "form-group d-flex flex-start";
+
+      // Create radio input
+      const radioInput = document.createElement("input");
+      radioInput.className = "form-check-input cbx hidden";
+      radioInput.type = "radio";
+      radioInput.name = name;
+      radioInput.id = `${name}-${option.toLowerCase()}`; // e.g., celebrating-yes
+      radioInput.value = option;
+      if (index == 0 && option == "Yes" && reservationData.length > 0) {
+        radioInput.checked = true;
+
+        validateMenuItems = true;
+        dinnerOptionsLogicCondition = true;
+
+        console.log("Dinner is ready!");
+        $("#menuContainer").show();
+
+        // calculate dinner price
+
+        calculateDinner(currentSelectedDinnerPeople);
+        if (dinnerOptionsLogicCondition === true) {
+          dinnerOptionsLogic();
+        }
+      }
+      // Change to use handleDinnerChoice instead of handleCelebratingChoice
+      radioInput.addEventListener("change", function () {
+        if (this.checked) {
+          handleDinnerChoice(this.value); // Make sure this matches your function name
+        }
+      });
+
+      // Create label
+      const label = document.createElement("label");
+      label.className = "form-check-label lbl mr-1";
+      label.setAttribute("for", `${name}-${option.toLowerCase()}`);
+
+      // Create span for text
+      const span = document.createElement("span");
+      span.textContent = ` ${option}`;
+
+      // Append all elements
+      formGroup.appendChild(radioInput);
+      formGroup.appendChild(label);
+      formGroup.appendChild(span);
+
+      // Append to container
+      containerId.appendChild(formGroup);
+    });
+  }
+
+  // Define the handler function
+  function handleDinnerChoice(value) {
+    dinnerOptionsLogicCondition = false;
+    // Changed function name to match
+
+    if (value === "Yes" && reservationData.length > 0) {
+      validateMenuItems = true;
+      dinnerOptionsLogicCondition = true;
+
+      console.log("Dinner is ready!");
+      $("#menuContainer").show();
+
+      // calculate dinner price
+
+      calculateDinner(currentSelectedDinnerPeople);
+    } else {
+      validateMenuItems = false;
+      dinnerOptionsLogicCondition = false;
+      calculateDinner(0);
+
+      console.log("No dinner selected!");
+      $("#menuContainer").hide();
+    }
+    console.log(dinnerOptionsLogicCondition + " - LOGIC FUNCTION");
+    if (dinnerOptionsLogicCondition === true) {
+      dinnerOptionsLogic();
+    }
+  }
+
+  function dinnerMenu(day) {
+    console.log(validateMenuItems + "Validation is conflict");
+
+    prixFixeDinnerMenuOption.innerHTML = "";
+    if (day >= 4 && day <= 6 && reservationData.length > 0) {
+      console.log(reservationData.lengt);
+      console.log(day + "YES DINNER MENU");
+
+      // Create the h2 element for dinner title
+      const dinnerHeading = document.createElement("p");
+
+      dinnerHeading.classList.add("mt-5");
+
+      dinnerHeading.textContent = `Indulge in Fabrika's $35 3-course menu as an add-on for online orders. Select "yes" to continue and enjoy a delicious dining experience!`;
+
+      prixFixeDinnerMenuOption.style.display = "block";
+      prixFixeDinnerMenuOption.appendChild(dinnerHeading);
+
+      // create option to choose dinner yes or no
+      createRadioButtons(
+        "dinner-option",
+        ["Yes", "No"],
+        prixFixeDinnerMenuOption
+      );
+
+      validateMenuItems = true;
+
+      // disable dinner
+      disabledDinner();
+    } else {
+      // dinner not available
+      dinnerNotAvailable();
+    }
+  }
+
+  //disabled dinner
+  function disabledDinner() {
+    // Hide dinner before 24 hours
+    console.log(selectedCalDate + "Selected Date");
+    console.log(todaySelectedDate + "Current Date fsdfdsfdsfdsfds");
+
+    // Add 24 hours to current date for food delivery cutoff
+    const cutoffDate = new Date(todaySelectedDate);
+
+    console.log(cutoffDate + "Today cuto off date");
+    cutoffDate.setHours(12);
+    //todaySelectedDate.getHours()
+    // Check if selected date is after the cutoff
+    const isFoodDeliveryAvailable = selectedCalDate >= cutoffDate;
+
+    if (isFoodDeliveryAvailable) {
+      $("#menuContainer").show();
+
+      console.log("Food Delivery Avaiable on this date");
+    } else {
+      dinnerNotAvailable();
+    }
+  }
+
+  function dinnerNotAvailable() {
+    $("#menuContainer").hide();
+    validateMenuItems = false;
+    calculateDinner(0);
+    prixFixeDinnerMenuOption.innerHTML = "";
+    prixFixeDinnerMenuOption.style.display = "none";
+    dinnerOptionsLogicCondition = false;
+    console.log("Food Delivery Not Available");
+  }
+
+  calculateDinner(currentSelectedDinnerPeople);
 
   //✅
   //✅
