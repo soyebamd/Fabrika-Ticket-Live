@@ -93,6 +93,7 @@ import {
 import { DinnerMenu } from "./src/DinnerMenu.js";
 
 document.addEventListener("DOMContentLoaded", function () {
+  let showDetails = document.getElementById("showDetails");
   // Fetch the dinner menu
 
   let currentShowName;
@@ -220,6 +221,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     burgerMenu.addEventListener("click", handleBurgerMenuClick);
   }
+
+  activeToggle();
 
   const customerInformation = document.querySelector("#customer-information");
   customerInformation.style.display = "none";
@@ -1374,8 +1377,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
               dinnerMenu(currentDay);
 
-              activeToggle(true);
-
               // if (reservationData.length < 0) {
               //   $("#menuContainer").hide();
               // } else {
@@ -2064,8 +2065,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   loadImg();
-
-  let showDetails = document.getElementById("showDetails");
 
   function paymentForm() {
     // Create the card element
