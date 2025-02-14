@@ -1310,8 +1310,6 @@ document.addEventListener("DOMContentLoaded", function () {
               reservationData.splice(removeBookingIndex, 1);
               console.log("Removed Reservation:", reservationData);
               cartCount.textContent = reservationData.length;
-              if (reservationData.length <= 0)
-                checkoutWrappper.classList.remove("pos-0");
 
               updateTableDisplay();
             }
@@ -1404,8 +1402,6 @@ document.addEventListener("DOMContentLoaded", function () {
                   document.getElementById(this.id).checked = false;
                   reservationData.splice(indexToRemove, 1);
                   cartCount.textContent = reservationData.length;
-                  if (reservationData.length <= 0)
-                    checkoutWrappper.classList.remove("pos-0");
                 }
 
                 // Optional: Update the UI or perform additional cleanup
